@@ -46,7 +46,7 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 /// Import the template pallet.
-pub use pallet_template;
+pub use pallet_dep_dns;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -268,9 +268,12 @@ impl pallet_sudo::Config for Runtime {
 }
 
 /// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
+impl pallet_dep_dns::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
-	type WeightInfo = pallet_template::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_dep_dns::weights::SubstrateWeight<Runtime>;
+	type Currency = Balances;
+	type ExpireNumber = ConstU32<5_256_000>;
+	type ResisterFee = ConstU128<1000>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -288,8 +291,7 @@ construct_runtime!(
 		Balances: pallet_balances,
 		TransactionPayment: pallet_transaction_payment,
 		Sudo: pallet_sudo,
-		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template,
+		DepDns: pallet_dep_dns,
 	}
 );
 
