@@ -2,8 +2,8 @@ use crate as pallet_dep_dns;
 use frame_support::traits::{ConstU32, ConstU64};
 use sp_core::H256;
 use sp_runtime::{
-    testing::Header,
-    traits::{BlakeTwo256, IdentityLookup},
+	testing::Header,
+	traits::{BlakeTwo256, IdentityLookup},
 };
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
@@ -11,15 +11,15 @@ type Block = frame_system::mocking::MockBlock<Test>;
 
 // Configure a mock runtime to test the pallet.
 frame_support::construct_runtime!(
-    pub enum Test where
-        Block = Block,
-        NodeBlock = Block,
-        UncheckedExtrinsic = UncheckedExtrinsic,
-    {
+	pub enum Test where
+		Block = Block,
+		NodeBlock = Block,
+		UncheckedExtrinsic = UncheckedExtrinsic,
+	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>},
-        Dns: pallet_dep_dns::{Pallet, Call, Storage, Event<T>},
-    }
+		Dns: pallet_dep_dns::{Pallet, Call, Storage, Event<T>},
+	}
 );
 
 impl frame_system::Config for Test {
@@ -66,14 +66,14 @@ impl pallet_balances::Config for Test {
 }
 
 impl pallet_dep_dns::Config for Test {
-    type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = ();
-    type Currency = Balances;
-    type ResisterFee = ConstU64<500>;  // Here you can set the fee you consider appropriate for tests
-    type ExpireNumber = ConstU64<10>;  // Here you can set the expiry number you consider appropriate for tests
+	type RuntimeEvent = RuntimeEvent;
+	type WeightInfo = ();
+	type Currency = Balances;
+	type ResisterFee = ConstU64<500>; // Here you can set the fee you consider appropriate for tests
+	type ExpireNumber = ConstU64<10>; // Here you can set the expiry number you consider appropriate for tests
 }
 
 // Build genesis storage according to the mock runtime.
 pub fn new_test_ext() -> sp_io::TestExternalities {
-    frame_system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+	frame_system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
 }
