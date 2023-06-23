@@ -16,16 +16,46 @@ mod benchmarking;
 pub mod weights;
 pub use weights::*;
 
+#[cfg(feature = "std")]
+use serde::Serialize;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
 	use frame_support::{
-		pallet_prelude::{DispatchResult, *},
+		pallet_prelude::{
+			ensure, Blake2_128Concat, ConstU32, Decode, DispatchResult, Encode, Get, IsType,
+			MaxEncodedLen, RuntimeDebug, StorageMap, TypeInfo,
+		},
 		traits::{Currency, ExistenceRequirement, WithdrawReasons},
 		WeakBoundedVec,
 	};
 	use frame_system::pallet_prelude::{BlockNumberFor, *};
 	use scale_info::prelude::{string::String, vec::Vec};
+
+	#[derive(Encode, Decode, PartialEq, Clone, RuntimeDebug, TypeInfo, MaxEncodedLen)]
+	#[cfg_attr(feature = "std", derive(Serialize, Eq))]
+	pub enum RecordType {
+		A,
+		AAAA,
+		CNAME,
+		MX,
+		NS,
+		PTR,
+	}
+
+	impl From<RecordType> for u8 {
+		fn from(t: RecordType) -> Self {
+			match t {
+				RecordType::A => 1,
+				RecordType::AAAA => 2,
+				RecordType::CNAME => 3,
+				RecordType::MX => 4,
+				RecordType::NS => 5,
+				RecordType::PTR => 6,
+			}
+		}
+	}
 
 	#[pallet::pallet]
 	#[pallet::without_storage_info]
@@ -71,8 +101,22 @@ pub mod pallet {
 		StorageMap<_, Blake2_128Concat, String, Domain<T::AccountId, BlockNumberFor<T>>>;
 
 	#[pallet::storage]
-	pub type DnsRecords<T> =
-		StorageDoubleMap<_, Blake2_128Concat, String, Twox64Concat, String, String>;
+	pub type ARecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
+
+	#[pallet::storage]
+	pub type AAAARecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
+
+	#[pallet::storage]
+	pub type CnameRecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
+
+	#[pallet::storage]
+	pub type MxRecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
+
+	#[pallet::storage]
+	pub type NsRecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
+
+	#[pallet::storage]
+	pub type PtrRecords<T> = StorageMap<_, Blake2_128Concat, String, String>;
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -82,9 +126,8 @@ pub mod pallet {
 		Renew { name: String, expire: BlockNumberFor<T> },
 		CancelDomain { name: String, owner: T::AccountId },
 		RigistrationUpdated { name: String },
-		DnsRecord { name: String, record_type: String, value: String },
-		DnsRecordRemoved { name: String, record_type: String },
-		// (name: String, record_type:String),
+		DnsRecord { name: String, record_type: u8, value: String },
+		DnsRecordRemoved { name: String, record_type: u8 },
 	}
 
 	// Errors inform users that something went wrong.
@@ -225,15 +268,21 @@ pub mod pallet {
 		pub fn add_update_dns_record(
 			origin: OriginFor<T>,
 			name: String,
-			record_type: String,
+			record_type: RecordType,
 			value: String,
 		) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
 			Self::is_owner(&name, &who)?;
-			DnsRecords::<T>::insert(&name, &record_type, value.clone());
-			Self::deposit_event(Event::DnsRecord { name, record_type, value });
-
+			match record_type {
+				RecordType::A => ARecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::AAAA => AAAARecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::MX => MxRecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::NS => NsRecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::CNAME => CnameRecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::PTR => PtrRecords::<T>::insert(&name, name.clone()+"\n"+&value),
+			}
+			Self::deposit_event(Event::DnsRecord { name, record_type: record_type.into(), value });
 			Ok(())
 		}
 
@@ -242,13 +291,20 @@ pub mod pallet {
 		pub fn remove_dns_record(
 			origin: OriginFor<T>,
 			name: String,
-			record_type: String,
+			record_type: RecordType,
 		) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
 			Self::is_owner(&name, &who)?;
-			DnsRecords::<T>::remove(&name, &record_type);
-			Self::deposit_event(Event::DnsRecordRemoved { name, record_type });
+			match record_type {
+				RecordType::A => ARecords::<T>::remove(&name),
+				RecordType::AAAA => AAAARecords::<T>::remove(&name),
+				RecordType::MX => MxRecords::<T>::remove(&name),
+				RecordType::NS => NsRecords::<T>::remove(&name),
+				RecordType::CNAME => CnameRecords::<T>::remove(&name),
+				RecordType::PTR => PtrRecords::<T>::remove(&name),
+			}
+			Self::deposit_event(Event::DnsRecordRemoved { name,record_type: record_type.into() });
 
 			Ok(())
 		}
