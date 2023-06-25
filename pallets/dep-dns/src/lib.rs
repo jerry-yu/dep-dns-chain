@@ -275,12 +275,12 @@ pub mod pallet {
 
 			Self::is_owner(&name, &who)?;
 			match record_type {
-				RecordType::A => ARecords::<T>::insert(&name, name.clone()+"\n"+&value),
-				RecordType::AAAA => AAAARecords::<T>::insert(&name, name.clone()+"\n"+&value),
-				RecordType::MX => MxRecords::<T>::insert(&name, name.clone()+"\n"+&value),
-				RecordType::NS => NsRecords::<T>::insert(&name, name.clone()+"\n"+&value),
-				RecordType::CNAME => CnameRecords::<T>::insert(&name, name.clone()+"\n"+&value),
-				RecordType::PTR => PtrRecords::<T>::insert(&name, name.clone()+"\n"+&value),
+				RecordType::A => ARecords::<T>::insert(&name, name.clone() + "\n" + &value),
+				RecordType::AAAA => AAAARecords::<T>::insert(&name, name.clone() + "\n" + &value),
+				RecordType::MX => MxRecords::<T>::insert(&name, name.clone() + "\n" + &value),
+				RecordType::NS => NsRecords::<T>::insert(&name, name.clone() + "\n" + &value),
+				RecordType::CNAME => CnameRecords::<T>::insert(&name, name.clone() + "\n" + &value),
+				RecordType::PTR => PtrRecords::<T>::insert(&name, name.clone() + "\n" + &value),
 			}
 			Self::deposit_event(Event::DnsRecord { name, record_type: record_type.into(), value });
 			Ok(())
@@ -304,7 +304,7 @@ pub mod pallet {
 				RecordType::CNAME => CnameRecords::<T>::remove(&name),
 				RecordType::PTR => PtrRecords::<T>::remove(&name),
 			}
-			Self::deposit_event(Event::DnsRecordRemoved { name,record_type: record_type.into() });
+			Self::deposit_event(Event::DnsRecordRemoved { name, record_type: record_type.into() });
 
 			Ok(())
 		}
