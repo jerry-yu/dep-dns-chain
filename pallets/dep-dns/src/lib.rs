@@ -258,6 +258,12 @@ pub mod pallet {
 
 			ensure!(domain.owner == who, Error::<T>::NotOwner);
 			DomainRegistry::<T>::remove(&name);
+			ARecords::<T>::remove(&name);
+			AAAARecords::<T>::remove(&name);
+			MxRecords::<T>::remove(&name);
+			NsRecords::<T>::remove(&name);
+			CnameRecords::<T>::remove(&name);
+			PtrRecords::<T>::remove(&name);
 			Self::deposit_event(Event::CancelDomain { name, owner: who });
 
 			Ok(())
