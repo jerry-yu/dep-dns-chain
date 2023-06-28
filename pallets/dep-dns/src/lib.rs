@@ -143,7 +143,7 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::call_index(0)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::register_domain())]
 		pub fn register_domain(
 			origin: OriginFor<T>,
 			name: String,
@@ -177,7 +177,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(1)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::renew_registration())]
 		pub fn transfer_ownershit(
 			origin: OriginFor<T>,
 			name: String,
@@ -199,7 +199,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(2)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::renew_registration())]
 		pub fn renew_registration(
 			origin: OriginFor<T>,
 			name: String,
@@ -225,7 +225,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(3)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::renew_registration())]
 		pub fn update_registration(
 			origin: OriginFor<T>,
 			name: String,
@@ -251,7 +251,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(4)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::cancel_domain())]
 		pub fn cancel_domain(origin: OriginFor<T>, name: String) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 			let domain = DomainRegistry::<T>::get(&name).ok_or(Error::<T>::NameNotExisted)?;
@@ -270,7 +270,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(5)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::add_update_dns_record())]
 		pub fn add_update_dns_record(
 			origin: OriginFor<T>,
 			name: String,
@@ -293,7 +293,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(6)]
-		#[pallet::weight(T::WeightInfo::do_something())]
+		#[pallet::weight(T::WeightInfo::add_update_dns_record())]
 		pub fn remove_dns_record(
 			origin: OriginFor<T>,
 			name: String,

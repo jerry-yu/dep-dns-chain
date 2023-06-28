@@ -14,7 +14,7 @@ fn it_should_register_domain_successfully() {
 		let _ = Balances::deposit_creating(&1, 1000);
 
 		// Dispatch a signed extrinsic for domain registration
-		assert_ok!(Dns::register_domain(
+		assert_ok!(DepDNS::register_domain(
 			RuntimeOrigin::signed(account_id),
 			domain.clone(),
 			owner_info.clone(),
@@ -36,14 +36,14 @@ fn it_should_not_register_domain_if_exists() {
 
 		let _ = Balances::deposit_creating(&account_id, 2000);
 
-		assert_ok!(Dns::register_domain(
+		assert_ok!(DepDNS::register_domain(
 			RuntimeOrigin::signed(account_id),
 			domain.clone(),
 			owner_info.clone(),
 			domain_alias.clone()
 		));
 		assert_noop!(
-			Dns::register_domain(
+			DepDNS::register_domain(
 				RuntimeOrigin::signed(account_id),
 				domain.clone(),
 				owner_info.clone(),
@@ -66,14 +66,14 @@ fn it_should_transfer_ownership() {
 		let owner_info = "Owner Information".to_string();
 
 		let _ = Balances::deposit_creating(&old_owner, 1000);
-		assert_ok!(Dns::register_domain(
+		assert_ok!(DepDNS::register_domain(
 			RuntimeOrigin::signed(old_owner),
 			domain.clone(),
 			owner_info.clone(),
 			domain_alias.clone()
 		));
 
-		assert_ok!(Dns::transfer_ownershit(
+		assert_ok!(DepDNS::transfer_ownershit(
 			RuntimeOrigin::signed(old_owner),
 			domain.clone(),
 			new_owner

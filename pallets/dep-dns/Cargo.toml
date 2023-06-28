@@ -1,13 +1,13 @@
 [package]
 name = "pallet-dep-dns"
 version = "4.0.0-dev"
-description = "FRAME pallet template for defining custom runtime logic."
+description = "FRAME pallet dep-dns for defining dns runtime logic."
 authors = ["Substrate DevHub <https://github.com/substrate-developer-hub>"]
 homepage = "https://substrate.io"
 edition = "2021"
 license = "MIT-0"
 publish = false
-repository = "https://github.com/substrate-developer-hub/substrate-d-dns/"
+repository = "https://github.com/jerry-yu/substrate-d-dns/"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
@@ -21,7 +21,7 @@ frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional
 frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 serde = { version = "1.0.136", features = ["derive"], optional = true }
-pallet-balances = { version = "4.0.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
+pallet-balances = { version = "4.0.0-dev",default-features = false, optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 
 [dev-dependencies]
 sp-core = { version = "7.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
@@ -41,7 +41,8 @@ std = [
 	"serde",
 ]
 runtime-benchmarks = [
-	"frame-benchmarking/runtime-benchmarks",
-	"pallet-balances/runtime-benchmarks",
+	"frame-benchmarking/runtime-benchmarks"
 ]
-try-runtime = ["frame-support/try-runtime"]
+try-runtime = [
+	"frame-support/try-runtime"
+]
